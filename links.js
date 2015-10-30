@@ -10,6 +10,7 @@
 		circular,
 		circularLayout,
 		computeDegree,
+		getWaitClass,
 		graphData,
 		height,
 		innerCircle,
@@ -136,35 +137,119 @@
 	};
 
 	linkData = [{
-		'em|ER': 10,
-		'ER|OR': 20,
-		'ER|FLOOR': 18,
-		'ER|ICU': 34,
-		'ER|dis': 12,
-		'FLOOR|ER': 15,
-		'FLOOR|dis': 15,
-		'ICU|OR': 5,
-		'ICU|dis': 10,
-		'PACU|ICU': 19,
-		'PACU|FLOOR': 15,
-		'OR|PACU': 18,
-		'elec|OR': 20,
-		'elec|FLOOR': 35
+		'em|ER': {
+			volume: 10,
+			wait: 0
+		},
+		'ER|OR': {
+			volume: 20,
+			wait: 1
+		},
+		'ER|FLOOR': {
+			volume: 18,
+			wait: 0.5
+		},
+		'ER|ICU': {
+			volume: 34,
+			wait: 2
+		},
+		'ER|dis': {
+			volume: 12,
+			wait: 3
+		},
+		'FLOOR|ER': {
+			volume: 15,
+			wait: 6
+		},
+		'FLOOR|dis': {
+			volume: 15,
+			wait: 5
+		},
+		'ICU|OR': {
+			volume: 5,
+			wait: 7
+		},
+		'ICU|dis': {
+			volume: 10,
+			wait: 3
+		},
+		'PACU|ICU': {
+			volume: 19,
+			wait: 30
+		},
+		'PACU|FLOOR': {
+			volume: 15,
+			wait: 30
+		},
+		'OR|PACU': {
+			volume: 18,
+			wait: 30
+		},
+		'elec|OR': {
+			volume: 20,
+			wait: 30
+		},
+		'elec|FLOOR': {
+			volume: 35,
+			wait: 30
+		}
 	}, {
-		'em|ER': 25,
-		'ER|OR': 5,
-		'ER|FLOOR': 30,
-		'ER|ICU': 20,
-		'ER|dis': 25,
-		'FLOOR|ER': 25,
-		'FLOOR|dis': 13,
-		'ICU|OR': 8,
-		'ICU|dis': 15,
-		'PACU|ICU': 15,
-		'PACU|FLOOR': 25,
-		'OR|PACU': 19,
-		'elec|OR': 25,
-		'elec|FLOOR': 30
+		'em|ER': {
+			volume: 25,
+			wait: 30
+		},
+		'ER|OR': {
+			volume: 5,
+			wait: 30
+		},
+		'ER|FLOOR': {
+			volume: 30,
+			wait: 30
+		},
+		'ER|ICU': {
+			volume: 20,
+			wait: 30
+		},
+		'ER|dis': {
+			volume: 25,
+			wait: 30
+		},
+		'FLOOR|ER': {
+			volume: 25,
+			wait: 30
+		},
+		'FLOOR|dis': {
+			volume: 13,
+			wait: 30
+		},
+		'ICU|OR': {
+			volume: 8,
+			wait: 30
+		},
+		'ICU|dis': {
+			volume: 15,
+			wait: 30
+		},
+		'PACU|ICU': {
+			volume: 15,
+			wait: 30
+		},
+		'PACU|FLOOR': {
+			volume: 25,
+			wait: 30
+		},
+		'OR|PACU': {
+			volume: 19,
+			wait: 30
+		},
+		'elec|OR': {
+			volume: 25,
+			wait: 30
+		},
+		'elec|FLOOR': {
+			volume: 30,
+			wait: 30
+		}
 	}];
 
 	selected = 0;
@@ -206,7 +291,7 @@
 
 			acc = 0;
 			return n.links.forEach(function(link) {
-				var weight = linkData[selected][link.id];
+				var weight = linkData[selected][link.id].volume;
 				if (link.source === n) {
 					link.sankey_source = {
 						start: acc,
@@ -230,7 +315,7 @@
 	computeDegree = function(graph) {
 		return graph.nodes.forEach(function(n) {
 			n.degree = d3.sum(n.links, function(link) {
-				return linkData[selected][link.id];
+				return linkData[selected][link.id].volume;
 			});
 		});
 	};
@@ -421,10 +506,25 @@
 
 	tension = 0.5;
 
+	getWaitClass = function(waitTime) {
+		// Between 0 and 10 hours
+		if (waitTime < 2) {
+			return 'lowWait';
+		}
+
+		if (waitTime < 5) {
+			return 'medWait';
+		}
+
+		return 'highWait';
+	};
+
 	links.enter().append('path').attr({
-		class: 'link flowline',
+		class: function(link) {
+			return getWaitClass(linkData[selected][link.id].wait) + ' link flowline';
+		},
 		'stroke-width': function(link) {
-			return linkThickness(linkData[selected][link.id]);
+			return linkThickness(linkData[selected][link.id].volume);
 		}
 	});
 
@@ -475,16 +575,24 @@
 	});
 
 	nodes.on('mouseover', function(n) {
-		var overLinks;
+		var focussedLinks,
+			overLinks;
+
+		focussedLinks = svg.selectAll('.link').filter(function(link) {
+			return link.source === n || link.target === n;
+		});
 
 		overLinks = svg.selectAll('.link').filter(function(link) {
 			return link.source !== n && link.target !== n;
 		});
-		return overLinks.classed('blurred', true);
+
+		focussedLinks.classed('focussed', true);
+		overLinks.classed('blurred', true);
 	});
 
 	nodes.on('mouseout', function() {
-		return svg.selectAll('.link').classed('blurred', false);
+		svg.selectAll('.link').classed('blurred', false);
+		svg.selectAll('.link').classed('focussed', false);
 	});
 
 	// On change, update the data
@@ -495,7 +603,7 @@
 			path.transition()
 			.duration(500)
 			.attr('stroke-width', function(link) {
-				return linkThickness(linkData[selected][link.id]);
+				return linkThickness(linkData[selected][link.id].volume);
 			});
 		});
 

@@ -38,10 +38,23 @@ svg {
 	stroke: #D8D8D8;
 	fill: none;
 	opacity: .6;
+	transition: stroke .4s ease, opacity .4s ease;
 }
 
 .blurred.link {
 	opacity: .05;
+}
+
+.focussed.link.lowWait {
+	stroke: #7D44BA;
+}
+
+.focussed.link.medWait {
+	stroke: #CD69BF;
+}
+
+.focussed.link.highWait {
+	stroke: #EF3DA7;
 }
 
 .label {
