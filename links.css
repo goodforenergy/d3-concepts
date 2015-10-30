@@ -6,6 +6,10 @@ svg {
 	background: white;
 }
 
+.node {
+	transition: opacity .4s ease;
+}
+
 .circle {
 	fill: rgba(0, 0, 0, 0);
 	stroke: #D8D8D8;
@@ -41,7 +45,8 @@ svg {
 	transition: stroke .4s ease, opacity .4s ease;
 }
 
-.blurred.link {
+.blurred.link,
+.blurred.node {
 	opacity: .05;
 }
 

@@ -575,22 +575,64 @@
 	});
 
 	nodes.on('mouseover', function(n) {
-		var focussedLinks,
-			overLinks;
+		var blurredNodes,
+			focussedLinks,
+			overLinks,
+			nodesToShow = [n.id];
 
 		focussedLinks = svg.selectAll('.link').filter(function(link) {
-			return link.source === n || link.target === n;
+			if (link.source === n && nodesToShow.indexOf(link.target.id) === -1) {
+				nodesToShow.push(link.target.id);
+				return true;
+			}
+
+			if (link.target === n && nodesToShow.indexOf(link.source.id) === -1) {
+				nodesToShow.push(link.source.id);
+				return true;
+			}
+
+			return false;
 		});
 
 		overLinks = svg.selectAll('.link').filter(function(link) {
 			return link.source !== n && link.target !== n;
 		});
 
+		blurredNodes = svg.selectAll('.node').filter(function(node) {
+			return nodesToShow.indexOf(node.id) === -1;
+		});
+
 		focussedLinks.classed('focussed', true);
 		overLinks.classed('blurred', true);
+		blurredNodes.classed('blurred', true);
 	});
 
 	nodes.on('mouseout', function() {
+		svg.selectAll('.link').classed('blurred', false);
+		svg.selectAll('.link').classed('focussed', false);
+		svg.selectAll('.node').classed('blurred', false);
+	});
+
+	links.on('mouseover', function(l) {
+		var blurredNodes,
+			blurredLinks;
+
+		d3.select(this).classed('focussed', true);
+
+		blurredNodes = svg.selectAll('.node').filter(function(node) {
+			return node !== l.source && node !== l.target;
+		});
+
+		blurredLinks = svg.selectAll('.link').filter(function(link) {
+			return link !== l;
+		});
+
+		blurredNodes.classed('blurred', true);
+		blurredLinks.classed('blurred', true);
+	});
+
+	links.on('mouseout', function() {
+		svg.selectAll('.node').classed('blurred', false);
 		svg.selectAll('.link').classed('blurred', false);
 		svg.selectAll('.link').classed('focussed', false);
 	});
