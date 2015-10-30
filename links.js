@@ -2,6 +2,11 @@
 (function() {
 	'use strict';
 	var MAX_WIDTH,
+		adjustedRadius,
+		adjustXCoord,
+		adjustYCoord,
+		calculateXCoordinate,
+		calculateYCoordinate,
 		circular,
 		circularLayout,
 		computeDegree,
@@ -251,8 +256,6 @@
 	// Adds a list of links to each node
 	listLinks(graphData);
 
-	console.log(graphData);
-
 	sankey = function(graph) {
 		return graph.nodes.forEach(function(n) {
 			var acc;
@@ -406,6 +409,30 @@
 		})
 	]).range([0, MAX_WIDTH / 2]);
 
+	adjustedRadius = function(node) {
+		var rad = radius(node.size);
+		if (node.type === 'nonAdmitted') {
+			rad += 100;
+		}
+		return rad;
+	};
+
+	adjustXCoord = function(node) {
+		return (4 + adjustedRadius(node)) * Math.cos(node.theta);
+	};
+
+	adjustYCoord = function(node) {
+		return (4 + adjustedRadius(node)) * Math.sin(node.theta);
+	};
+
+	calculateXCoordinate = function(node) {
+		return node.x + adjustXCoord(node);
+	};
+
+	calculateYCoordinate = function(node) {
+		return node.y + adjustYCoord(node);
+	};
+
 	nodes = nodesLayer.selectAll('.node').data(graphData.nodes);
 
 	nodes.enter().append('circle').attr({
@@ -413,12 +440,8 @@
 		r: function(node) {
 			return radius(node.size);
 		},
-		cx: function(node) {
-			return node.x + (4 + radius(node.size)) * Math.cos(node.theta);
-		},
-		cy: function(node) {
-			return node.y + (4 + radius(node.size)) * Math.sin(node.theta);
-		}
+		cx: calculateXCoordinate,
+		cy: calculateYCoordinate
 	});
 
 	labels = nodesLayer.selectAll('.label').data(graphData.nodes);
@@ -428,12 +451,8 @@
 	}).attr({
 		class: 'label',
 		dy: '0.35em',
-		x: function(node) {
-			return node.x + (4 + radius(node.size)) * Math.cos(node.theta);
-		},
-		y: function(node) {
-			return node.y + (4 + radius(node.size)) * Math.sin(node.theta);
-		}
+		x: calculateXCoordinate,
+		y: calculateYCoordinate
 	});
 
 	max = d3.max(graphData.nodes, function(n) {
@@ -484,10 +503,11 @@
 			ys = link.source.y + sankeyDys;
 			xt = link.target.x + sankeyDxt;
 			yt = link.target.y + sankeyDyt;
-			xsi = xs + (4 + radius(link.source.size)) * Math.cos(link.source.theta);
-			ysi = ys + (4 + radius(link.source.size)) * Math.sin(link.source.theta);
-			xti = xt + (4 + radius(link.target.size)) * Math.cos(link.target.theta);
-			yti = yt + (4 + radius(link.target.size)) * Math.sin(link.target.theta);
+
+			xsi = xs + adjustXCoord(link.source);
+			ysi = ys + adjustYCoord(link.source);
+			xti = xt + adjustXCoord(link.target);
+			yti = yt + adjustYCoord(link.target);
 			cxs = xs - link.source.x * tension;
 			cys = ys - link.source.y * tension;
 			cxt = xt - link.target.x * tension;
