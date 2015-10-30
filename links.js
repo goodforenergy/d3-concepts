@@ -12,6 +12,7 @@
 		computeDegree,
 		graphData,
 		height,
+		innerCircle,
 		labels,
 		linkThickness,
 		links,
@@ -21,6 +22,7 @@
 		nodes,
 		nodesLayer,
 		objectify,
+		outerCircle,
 		radius,
 		sankey,
 		svg,
@@ -45,7 +47,7 @@
 			}, {
 				id: 'dis',
 				size: 18,
-				type: 'nonAdmitted'
+				type: 'notAdmitted'
 			}, {
 				id: 'PACU',
 				size: 20,
@@ -57,11 +59,11 @@
 			}, {
 				id: 'elec',
 				size: 18,
-				type: 'nonAdmitted'
+				type: 'notAdmitted'
 			}, {
 				id: 'em',
 				size: 18,
-				type: 'nonAdmitted'
+				type: 'notAdmitted'
 			}
 		],
 		links: [
@@ -229,6 +231,9 @@
 			}
 		];
 
+	innerCircle = 160;
+	outerCircle = 250;
+
 	objectify = function(graph) {
 		return graph.links.forEach(function(l) {
 			return graph.nodes.forEach(function(n) {
@@ -301,6 +306,15 @@
 	svg.attr({
 		viewBox: (-width / 2) + ' ' + (-height / 2) + ' ' + width + ' ' + height
 	});
+
+	// Draw the two node circles
+	svg.append('circle')
+		.attr('r', innerCircle + 40)
+		.attr('class', 'circle');
+
+	svg.append('circle')
+		.attr('r', outerCircle + 40)
+		.attr('class', 'circle');
 
 	circularLayout = function() {
 		var deltaTheta,
@@ -393,7 +407,7 @@
 		return self;
 	};
 
-	circular = circularLayout().rho(160);
+	circular = circularLayout().rho(innerCircle);
 
 	circular(graphData.nodes);
 
@@ -411,8 +425,8 @@
 
 	adjustedRadius = function(node) {
 		var rad = radius(node.size);
-		if (node.type === 'nonAdmitted') {
-			rad += 100;
+		if (node.type === 'notAdmitted') {
+			rad += (outerCircle - innerCircle);
 		}
 		return rad;
 	};
@@ -436,7 +450,9 @@
 	nodes = nodesLayer.selectAll('.node').data(graphData.nodes);
 
 	nodes.enter().append('circle').attr({
-		class: 'node',
+		class: function(node) {
+			return 'node ' + node.type;
+		},
 		r: function(node) {
 			return radius(node.size);
 		},

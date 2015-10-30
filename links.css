@@ -2,21 +2,38 @@ svg {
 	background: white;
 }
 
-.node {
-	fill: lightgray;
-	stroke: gray;
-	stroke-width: 2px;
+.circle {
+	fill: rgba(0, 0, 0, 0);
+	stroke: #D8D8D8;
+	stroke-width: 1px;
 }
 
-.node:hover {
-	stroke-width: 3px;
-	stroke: #555;
+.notAdmitted {
+	stroke: rgba(77, 90, 101, 1);
+	fill: white;
+	stroke-width: 8px;
+}
+
+.admitted {
+	stroke: rgba(239, 61, 167, 1);
+	fill: white;
+	stroke-width: 8px;
+}
+
+.notAdmitted:hover {
+	stroke: rgba(77, 90, 101, .7);
+	stroke-width: 8px;
+}
+
+.admitted:hover {
+	stroke: rgba(239, 61, 167, .7);
+	stroke-width: 8px;
 }
 
 .link {
-	stroke: #004;
+	stroke: #D8D8D8;
 	fill: none;
-	opacity: .2;
+	opacity: .6;
 }
 
 .blurred.link {
@@ -26,9 +43,8 @@ svg {
 .label {
 	text-anchor: middle;
 	font-size: 16px;
-	fill: #444;
-	font-weight: bold;
-	font-family: sans-serif;
+	fill: #34495E;
+	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	pointer-events: none;
 }
 
