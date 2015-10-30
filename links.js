@@ -68,84 +68,69 @@
 			}
 		],
 		links: [
-
 			{
 				source: 'em',
-				target: 'ER',
-				weight: 12
+				target: 'ER'
 			},
 
 			{
 				source: 'ER',
-				target: 'OR',
-				weight: 24
+				target: 'OR'
 			},
 
 			{
 				source: 'ER',
-				target: 'FLOOR',
-				weight: 20
+				target: 'FLOOR'
 			},
 
 			{
 				source: 'ER',
-				target: 'ICU',
-				weight: 30
+				target: 'ICU'
 			},
 
 			{
 				source: 'ER',
-				target: 'dis',
-				weight: 10
+				target: 'dis'
 			},
 			{
 				source: 'FLOOR',
-				target: 'ER',
-				weight: 10
+				target: 'ER'
 			},
 			{
 				source: 'FLOOR',
-				target: 'dis',
-				weight: 25
+				target: 'dis'
 			},
 
 			{
 				source: 'ICU',
-				target: 'OR',
-				weight: 25
+				target: 'OR'
 			},
 
 			{
 				source: 'ICU',
-				target: 'dis',
-				weight: 15
+				target: 'dis'
 			},
 
 			{
 				source: 'PACU',
-				target: 'ICU',
-				weight: 5
+				target: 'ICU'
 			},
 
 			{
 				source: 'PACU',
-				target: 'FLOOR',
-				weight: 8
+				target: 'FLOOR'
 			},
 			{
 				source: 'OR',
-				target: 'PACU',
-				weight: 22
+				target: 'PACU'
 			},
 			{
 				source: 'elec',
-				target: 'OR',
-				weight: 25
+				target: 'OR'
 			},
 			{
 				source: 'elec',
-				target: 'FLOOR',
-				weight: 10
+				target: 'FLOOR'
 			}
 		]
 	};
@@ -221,17 +206,18 @@
 
 			acc = 0;
 			return n.links.forEach(function(link) {
+				var weight = linkData[selected][link.id];
 				if (link.source === n) {
 					link.sankey_source = {
 						start: acc,
-						middle: acc + link.weight / 2,
-						end: acc += link.weight
+						middle: acc + weight / 2,
+						end: acc += weight
 					};
 				} else if (link.target === n) {
 					link.sankey_target = {
 						start: acc,
-						middle: acc + link.weight / 2,
-						end: acc += link.weight
+						middle: acc + weight / 2,
+						end: acc += weight
 					};
 				}
 			});
@@ -244,7 +230,7 @@
 	computeDegree = function(graph) {
 		return graph.nodes.forEach(function(n) {
 			n.degree = d3.sum(n.links, function(link) {
-				return link.weight;
+				return linkData[selected][link.id];
 			});
 		});
 	};
@@ -438,7 +424,7 @@
 	links.enter().append('path').attr({
 		class: 'link flowline',
 		'stroke-width': function(link) {
-			return linkThickness(link.weight);
+			return linkThickness(linkData[selected][link.id]);
 		}
 	});
 
