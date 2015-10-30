@@ -1,3 +1,7 @@
+body {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 svg {
 	background: white;
 }
@@ -44,7 +48,6 @@ svg {
 	text-anchor: middle;
 	font-size: 16px;
 	fill: #34495E;
-	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	pointer-events: none;
 }
 

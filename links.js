@@ -14,6 +14,7 @@
 		height,
 		innerCircle,
 		labels,
+		linkData,
 		linkThickness,
 		links,
 		linksLayer,
@@ -25,9 +26,9 @@
 		outerCircle,
 		radius,
 		sankey,
+		selected,
 		svg,
 		tension,
-		updatedLinks,
 		width;
 
 	graphData = {
@@ -149,94 +150,47 @@
 		]
 	};
 
-	updatedLinks = [
+	linkData = [{
+		'em|ER': 10,
+		'ER|OR': 20,
+		'ER|FLOOR': 18,
+		'ER|ICU': 34,
+		'ER|dis': 12,
+		'FLOOR|ER': 15,
+		'FLOOR|dis': 15,
+		'ICU|OR': 5,
+		'ICU|dis': 10,
+		'PACU|ICU': 19,
+		'PACU|FLOOR': 15,
+		'OR|PACU': 18,
+		'elec|OR': 20,
+		'elec|FLOOR': 35
+	}, {
+		'em|ER': 25,
+		'ER|OR': 5,
+		'ER|FLOOR': 30,
+		'ER|ICU': 20,
+		'ER|dis': 25,
+		'FLOOR|ER': 25,
+		'FLOOR|dis': 13,
+		'ICU|OR': 8,
+		'ICU|dis': 15,
+		'PACU|ICU': 15,
+		'PACU|FLOOR': 25,
+		'OR|PACU': 19,
+		'elec|OR': 25,
+		'elec|FLOOR': 30
+	}];
 
-			{
-				source: 'em',
-				target: 'ER',
-				weight: 10
-			},
-
-			{
-				source: 'ER',
-				target: 'OR',
-				weight: 20
-			},
-
-			{
-				source: 'ER',
-				target: 'FLOOR',
-				weight: 18
-			},
-
-			{
-				source: 'ER',
-				target: 'ICU',
-				weight: 34
-			},
-
-			{
-				source: 'ER',
-				target: 'dis',
-				weight: 12
-			},
-			{
-				source: 'FLOOR',
-				target: 'ER',
-				weight: 15
-			},
-			{
-				source: 'FLOOR',
-				target: 'dis',
-				weight: 15
-			},
-
-			{
-				source: 'ICU',
-				target: 'OR',
-				weight: 5
-			},
-
-			{
-				source: 'ICU',
-				target: 'dis',
-				weight: 10
-			},
-
-			{
-				source: 'PACU',
-				target: 'ICU',
-				weight: 19
-			},
-
-			{
-				source: 'PACU',
-				target: 'FLOOR',
-				weight: 15
-			},
-			{
-				source: 'OR',
-				target: 'PACU',
-				weight: 18
-			},
-			{
-				source: 'elec',
-				target: 'OR',
-				weight: 20
-			},
-			{
-				source: 'elec',
-				target: 'FLOOR',
-				weight: 15
-			}
-		];
+	selected = 0;
 
 	innerCircle = 160;
 	outerCircle = 250;
 
 	objectify = function(graph) {
 		return graph.links.forEach(function(l) {
-			return graph.nodes.forEach(function(n) {
+			l.id = l.source + '|' + l.target;
+			graph.nodes.forEach(function(n) {
 				if (l.source === n.id) {
 					l.source = n;
 				}
@@ -546,5 +500,17 @@
 	nodes.on('mouseout', function() {
 		return svg.selectAll('.link').classed('blurred', false);
 	});
+
+	// On change, update the data
+	d3.selectAll('input')
+		.on('change', function() {
+			selected = selected === 0 ? 1 : 0;
+			var path = svg.selectAll('path');
+			path.transition()
+			.duration(500)
+			.attr('stroke-width', function(link) {
+				return linkThickness(linkData[selected][link.id]);
+			});
+		});
 
 }).call(this);
