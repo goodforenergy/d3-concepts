@@ -36,221 +36,251 @@
 		nodes: [
 			{
 				id: 'ER',
-				size: 45,
+				name: 'ER',
+				capacity: 45,
 				type: 'admitted'
 			}, {
-				id: 'FLOOR',
-				size: 30,
+				id: 'FL',
+				name: 'Floor',
+				capacity: 30,
 				type: 'admitted'
 			}, {
-				id: 'ICU',
-				size: 26,
+				id: 'IC',
+				name: 'ICU',
+				capacity: 26,
 				type: 'admitted'
 			}, {
-				id: 'dis',
-				size: 18,
+				id: 'DI',
+				name: 'Discharged',
+				capacity: 18,
 				type: 'notAdmitted'
 			}, {
-				id: 'PACU',
-				size: 20,
+				id: 'PA',
+				name: 'PACU',
+				capacity: 20,
 				type: 'admitted'
 			}, {
 				id: 'OR',
-				size: 35,
+				name: 'OR',
+				capacity: 35,
 				type: 'admitted'
 			}, {
-				id: 'elec',
-				size: 18,
+				id: 'EL',
+				name: 'Elective Admissions',
+				capacity: 18,
 				type: 'notAdmitted'
 			}, {
-				id: 'em',
-				size: 18,
+				id: 'NE',
+				name: 'Non-Elective Admissions',
+				capacity: 18,
 				type: 'notAdmitted'
 			}
 		],
+
 		links: [
 			{
-				source: 'em',
+				source: 'NE',
 				target: 'ER'
 			},
-
 			{
 				source: 'ER',
 				target: 'OR'
 			},
-
 			{
 				source: 'ER',
-				target: 'FLOOR'
+				target: 'FL'
 			},
-
 			{
 				source: 'ER',
-				target: 'ICU'
+				target: 'IC'
 			},
-
 			{
 				source: 'ER',
-				target: 'dis'
+				target: 'DI'
 			},
 			{
-				source: 'FLOOR',
+				source: 'FL',
 				target: 'ER'
 			},
 			{
-				source: 'FLOOR',
-				target: 'dis'
+				source: 'FL',
+				target: 'DI'
 			},
-
 			{
-				source: 'ICU',
+				source: 'IC',
 				target: 'OR'
 			},
-
 			{
-				source: 'ICU',
-				target: 'dis'
+				source: 'IC',
+				target: 'DI'
 			},
-
 			{
-				source: 'PACU',
-				target: 'ICU'
+				source: 'PA',
+				target: 'IC'
 			},
-
 			{
-				source: 'PACU',
-				target: 'FLOOR'
+				source: 'PA',
+				target: 'FL'
 			},
 			{
 				source: 'OR',
-				target: 'PACU'
+				target: 'PA'
 			},
 			{
-				source: 'elec',
+				source: 'EL',
 				target: 'OR'
 			},
 			{
-				source: 'elec',
-				target: 'FLOOR'
+				source: 'EL',
+				target: 'FL'
 			}
 		]
 	};
 
-	linkData = [{
-		'em|ER': {
-			volume: 10,
-			wait: 0
+	linkData = [
+		{
+			nodes: {
+				ER: [1, 2, 4, 1, 5],
+				FL: [2, 4, 3, 5, 6],
+				IC: [2, 4, 3, 4, 2],
+				DI: [3, 1, 3, 4, 1],
+				PA: [2, 4, 3, 5, 6],
+				OR: [3, 1, 5, 3, 1],
+				EL: [5, 4, 3, 5, 6],
+				NE: [1, 2, 4, 6, 2]
+			},
+
+			links: {
+				'NE|ER': {
+					vol: 10,
+					wait: 0
+				},
+				'ER|OR': {
+					vol: 20,
+					wait: 1
+				},
+				'ER|FL': {
+					vol: 18,
+					wait: 0.5
+				},
+				'ER|IC': {
+					vol: 34,
+					wait: 2
+				},
+				'ER|DI': {
+					vol: 12,
+					wait: 3
+				},
+				'FL|ER': {
+					vol: 15,
+					wait: 6
+				},
+				'FL|DI': {
+					vol: 15,
+					wait: 5
+				},
+				'IC|OR': {
+					vol: 5,
+					wait: 7
+				},
+				'IC|DI': {
+					vol: 10,
+					wait: 3
+				},
+				'PA|IC': {
+					vol: 19,
+					wait: 2
+				},
+				'PA|FL': {
+					vol: 15,
+					wait: 3
+				},
+				'OR|PA': {
+					vol: 18,
+					wait: 4
+				},
+				'EL|OR': {
+					vol: 20,
+					wait: 2.5
+				},
+				'EL|FL': {
+					vol: 30,
+					wait: 3
+				}
+			}
 		},
-		'ER|OR': {
-			volume: 20,
-			wait: 1
-		},
-		'ER|FLOOR': {
-			volume: 18,
-			wait: 0.5
-		},
-		'ER|ICU': {
-			volume: 34,
-			wait: 2
-		},
-		'ER|dis': {
-			volume: 12,
-			wait: 3
-		},
-		'FLOOR|ER': {
-			volume: 15,
-			wait: 6
-		},
-		'FLOOR|dis': {
-			volume: 15,
-			wait: 5
-		},
-		'ICU|OR': {
-			volume: 5,
-			wait: 7
-		},
-		'ICU|dis': {
-			volume: 10,
-			wait: 3
-		},
-		'PACU|ICU': {
-			volume: 19,
-			wait: 30
-		},
-		'PACU|FLOOR': {
-			volume: 15,
-			wait: 30
-		},
-		'OR|PACU': {
-			volume: 18,
-			wait: 30
-		},
-		'elec|OR': {
-			volume: 20,
-			wait: 30
-		},
-		'elec|FLOOR': {
-			volume: 35,
-			wait: 30
+		{
+			nodes: {
+				ER: [5, 2, 4, 3, 5],
+				FL: [1, 2, 2, 5, 6],
+				IC: [2, 7, 3, 4, 3],
+				DI: [3, 3, 3, 4, 1],
+				PA: [1, 4, 4, 6, 5],
+				OR: [3, 8, 5, 3, 4],
+				EL: [5, 4, 3, 5, 6],
+				NE: [3, 1, 3, 3, 4]
+			},
+
+			links: {
+				'NE|ER': {
+					vol: 15,
+					wait: 1
+				},
+				'ER|OR': {
+					vol: 30,
+					wait: 1
+				},
+				'ER|FL': {
+					vol: 9,
+					wait: 2.5
+				},
+				'ER|IC': {
+					vol: 25,
+					wait: 0
+				},
+				'ER|DI': {
+					vol: 20,
+					wait: 4
+				},
+				'FL|ER': {
+					vol: 8,
+					wait: 3
+				},
+				'FL|DI': {
+					vol: 20,
+					wait: 4
+				},
+				'IC|OR': {
+					vol: 10,
+					wait: 5
+				},
+				'IC|DI': {
+					vol: 8,
+					wait: 0
+				},
+				'PA|IC': {
+					vol: 28,
+					wait: 3
+				},
+				'PA|FL': {
+					vol: 20,
+					wait: 2
+				},
+				'OR|PA': {
+					vol: 22,
+					wait: 1
+				},
+				'EL|OR': {
+					vol: 22,
+					wait: 0.5
+				},
+				'EL|FL': {
+					vol: 7,
+					wait: 2.5
+				}
+			}
 		}
-	}, {
-		'em|ER': {
-			volume: 25,
-			wait: 30
-		},
-		'ER|OR': {
-			volume: 5,
-			wait: 30
-		},
-		'ER|FLOOR': {
-			volume: 30,
-			wait: 30
-		},
-		'ER|ICU': {
-			volume: 20,
-			wait: 30
-		},
-		'ER|dis': {
-			volume: 25,
-			wait: 30
-		},
-		'FLOOR|ER': {
-			volume: 25,
-			wait: 30
-		},
-		'FLOOR|dis': {
-			volume: 13,
-			wait: 30
-		},
-		'ICU|OR': {
-			volume: 8,
-			wait: 30
-		},
-		'ICU|dis': {
-			volume: 15,
-			wait: 30
-		},
-		'PACU|ICU': {
-			volume: 15,
-			wait: 30
-		},
-		'PACU|FLOOR': {
-			volume: 25,
-			wait: 30
-		},
-		'OR|PACU': {
-			volume: 19,
-			wait: 30
-		},
-		'elec|OR': {
-			volume: 25,
-			wait: 30
-		},
-		'elec|FLOOR': {
-			volume: 30,
-			wait: 30
-		}
-	}];
+	];
 
 	selected = 0;
 
@@ -291,7 +321,7 @@
 
 			acc = 0;
 			return n.links.forEach(function(link) {
-				var weight = linkData[selected][link.id].volume;
+				var weight = linkData[selected].links[link.id].vol;
 				if (link.source === n) {
 					link.sankey_source = {
 						start: acc,
@@ -315,7 +345,7 @@
 	computeDegree = function(graph) {
 		return graph.nodes.forEach(function(n) {
 			n.degree = d3.sum(n.links, function(link) {
-				return linkData[selected][link.id].volume;
+				return linkData[selected].links[link.id].vol;
 			});
 		});
 	};
@@ -436,20 +466,20 @@
 
 	circular(graphData.nodes);
 
-	MAX_WIDTH = 60;
+	MAX_WIDTH = 100;
 
 	linksLayer = svg.append('g');
 
 	nodesLayer = svg.append('g');
 
 	radius = d3.scale.sqrt().domain([
-		0, d3.min(graphData.nodes, function(n) {
-			return n.size;
+		0, d3.max(graphData.nodes, function(n) {
+			return n.capacity;
 		})
 	]).range([0, MAX_WIDTH / 2]);
 
 	adjustedRadius = function(node) {
-		var rad = radius(node.size);
+		var rad = radius(node.capacity);
 		if (node.type === 'notAdmitted') {
 			rad += (outerCircle - innerCircle);
 		}
@@ -479,7 +509,7 @@
 			return 'node ' + node.type;
 		},
 		r: function(node) {
-			return radius(node.size);
+			return radius(node.capacity);
 		},
 		cx: calculateXCoordinate,
 		cy: calculateYCoordinate
@@ -488,7 +518,7 @@
 	labels = nodesLayer.selectAll('.label').data(graphData.nodes);
 
 	labels.enter().append('text').text(function(node) {
-		return node.id;
+		return node.name;
 	}).attr({
 		class: 'label',
 		dy: '0.35em',
@@ -521,10 +551,10 @@
 
 	links.enter().append('path').attr({
 		class: function(link) {
-			return getWaitClass(linkData[selected][link.id].wait) + ' link flowline';
+			return getWaitClass(linkData[selected].links[link.id].wait) + ' link flowline';
 		},
 		'stroke-width': function(link) {
-			return linkThickness(linkData[selected][link.id].volume);
+			return linkThickness(linkData[selected].links[link.id].vol);
 		}
 	});
 
@@ -645,7 +675,7 @@
 			path.transition()
 			.duration(500)
 			.attr('stroke-width', function(link) {
-				return linkThickness(linkData[selected][link.id].volume);
+				return linkThickness(linkData[selected].links[link.id].vol);
 			});
 		});
 
