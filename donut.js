@@ -3,47 +3,16 @@
 	'use strict';
 
 	var colors = {
-			vacant: '#ebebeb',
-			inTreatment: '#21313e',
+			vacant: '#fff',
+			treatment: '#21313e',
 			lowWait: '#7d44ba',
 			medWait: '#cd69bf',
 			highWait: '#ef3da7'
 		},
 
-		data = [[{
-			type: 'highWait',
-			value: 25
-		}, {
-			type: 'medWait',
-			value: 25
-		},
-		{
-			type: 'lowWait',
-			value: 25
-		}, {
-			type: 'inTreatment',
-			value: 25
-		}, {
-			type: 'vacant',
-			value: 25
-		}],
-		[{
-			type: 'highWait',
-			value: 35
-		}, {
-			type: 'medWait',
-			value: 20
-		},
-		{
-			type: 'lowWait',
-			value: 35
-		}, {
-			type: 'inTreatment',
-			value: 25
-		}, {
-			type: 'vacant',
-			value: 5
-		}]],
+		mapping = ['treatment', 'lowWait', 'medWait', 'highWait', 'vacant'],
+
+		data = [[1, 2, 3, 4, 5], [5, 4, 3, 2, 1]],
 
 		selected = 0;
 
@@ -59,7 +28,6 @@
 
 	// Create the donut pie chart layout
 	var pie = d3.layout.pie()
-		.value(function(d) { return d.value; })
 		.sort(null);
 
 	// Append SVG attributes and append g to the SVG
@@ -86,8 +54,8 @@
 	var path = g.append('path')
 		.attr('d', arc)
 		.each(function(d) { this._current = d; }) // store the initial angles
-		.attr('fill', function(d) {
-			return colors[d.data.type];
+		.attr('fill', function(d, i) {
+			return colors[mapping[i]];
 		});
 
 	// Append text to the inner circle
