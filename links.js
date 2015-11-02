@@ -15,6 +15,7 @@
 		height,
 		innerCircle,
 		labels,
+		lineConfiguration,
 		linkData,
 		linkThickness,
 		links,
@@ -134,7 +135,13 @@
 				source: 'EL',
 				target: 'FL'
 			}
-		]
+		],
+
+		waitRange: {
+			low: [0, 3],
+			med: [4, 6],
+			high: [6, 100]
+		}
 	};
 
 	linkData = [
@@ -248,7 +255,7 @@
 				},
 				'FL|DI': {
 					vol: 20,
-					wait: 4
+					wait: 0
 				},
 				'IC|OR': {
 					vol: 10,
@@ -537,26 +544,29 @@
 	tension = 0.5;
 
 	getWaitClass = function(waitTime) {
-		// Between 0 and 10 hours
-		if (waitTime < 2) {
+		if (waitTime >= graphData.waitRange.low[0] && waitTime <= graphData.waitRange.low[1]) {
 			return 'lowWait';
 		}
 
-		if (waitTime < 5) {
+		if (waitTime >= graphData.waitRange.med[0] && waitTime <= graphData.waitRange.med[1]) {
 			return 'medWait';
 		}
 
-		return 'highWait';
+		if (waitTime >= graphData.waitRange.high[0] && waitTime <= graphData.waitRange.high[1]) {
+			return 'highWait';
+		}
 	};
 
-	links.enter().append('path').attr({
+	lineConfiguration = {
 		class: function(link) {
 			return getWaitClass(linkData[selected].links[link.id].wait) + ' link flowline';
 		},
 		'stroke-width': function(link) {
 			return linkThickness(linkData[selected].links[link.id].vol);
 		}
-	});
+	};
+
+	links.enter().append('path').attr(lineConfiguration);
 
 	links.attr({
 		d: function(link) {
@@ -672,11 +682,12 @@
 		.on('change', function() {
 			selected = selected === 0 ? 1 : 0;
 			var path = svg.selectAll('path');
+
+			path.classed('lowWait medWait highWait', false);
+
 			path.transition()
 			.duration(500)
-			.attr('stroke-width', function(link) {
-				return linkThickness(linkData[selected].links[link.id].vol);
-			});
+			.attr(lineConfiguration);
 		});
 
 }).call(this);

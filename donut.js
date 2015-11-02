@@ -5,12 +5,12 @@
 	var colors = {
 			vacant: '#fff',
 			treatment: '#21313e',
-			lowWait: '#7d44ba',
-			medWait: '#cd69bf',
-			highWait: '#ef3da7'
+			low: '#7d44ba',
+			med: '#cd69bf',
+			high: '#ef3da7'
 		},
 
-		mapping = ['treatment', 'lowWait', 'medWait', 'highWait', 'vacant'],
+		mapping = ['treatment', 'low', 'med', 'high', 'vacant'],
 
 		data = [[1, 2, 3, 4, 5], [5, 4, 3, 2, 1]],
 
