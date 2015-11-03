@@ -22,7 +22,6 @@
 		computeDegree,
 		data,
 		getWaitClass,
-		graphSetup,
 		height,
 		innerCircle,
 		labels,
@@ -99,8 +98,8 @@
 		}
 	];
 
-	graphSetup = {
-		nodeCapacity: {
+	data = {
+		capacity: {
 			EA: 9,			// elective admissions
 			NON_EA: 8,		// non-Elective admissions
 			ED: 10,			// emergency department
@@ -112,76 +111,6 @@
 			DIS: 6			// discharge
 		},
 
-		links: [
-			{
-				source: 'NON_EA',
-				target: 'ED'
-			},
-			{
-				source: 'ED',
-				target: 'OR'
-			},
-			{
-				source: 'ED',
-				target: 'FLOOR'
-			},
-			{
-				source: 'ED',
-				target: 'ICU'
-			},
-			{
-				source: 'ED',
-				target: 'DIS'
-			},
-			{
-				source: 'FLOOR',
-				target: 'ED'
-			},
-			{
-				source: 'FLOOR',
-				target: 'DIS'
-			},
-			{
-				source: 'ICU',
-				target: 'OR'
-			},
-			{
-				source: 'ICU',
-				target: 'DIS'
-			},
-			{
-				source: 'PACU',
-				target: 'ICU'
-			},
-			{
-				source: 'PACU',
-				target: 'FLOOR'
-			},
-			{
-				source: 'OR',
-				target: 'PACU'
-			},
-			{
-				source: 'EA',
-				target: 'OR'
-			},
-			{
-				source: 'EA',
-				target: 'FLOOR'
-			}
-		]
-	};
-
-	network = {
-		nodes: nodes.map(function(node) {
-			node.capacity = graphSetup.nodeCapacity[node.id];
-			return node;
-		}),
-
-		links: graphSetup.links
-	};
-
-	data = {
 		census: {
 			ED: [[2, 1, 1, 5], [2, 2, 3, 1]],
 			FLOOR: [[1, 2, 1, 0], [0, 2, 1, 1]],
@@ -214,6 +143,23 @@
 
 	innerCircle = 160;
 	outerCircle = 250;
+
+	network = {
+		nodes: nodes.map(function(node) {
+			node.capacity = data.capacity[node.id];
+			return node;
+		}),
+
+		links: Object.keys(data.outflow).filter(function(key) {
+			return key !== 'overall';
+		}).map(function(key) {
+			var nodes = key.split('|');
+			return {
+				source: nodes[0],
+				target: nodes[1]
+			};
+		})
+	};
 
 	objectify = function(graph) {
 		return graph.links.forEach(function(l) {
