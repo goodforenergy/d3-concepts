@@ -1,0 +1,112 @@
+{
+	"nodes": [
+		{
+			"id": "ER",
+			"name": "ER",
+			"capacity": 45,
+			"type": "admitted"
+		}, {
+			"id": "FL",
+			"name": "Floor",
+			"capacity": 30,
+			"type": "admitted"
+		}, {
+			"id": "IC",
+			"name": "ICU",
+			"capacity": 26,
+			"type": "admitted"
+		}, {
+			"id": "DI",
+			"name": "Discharged",
+			"capacity": 18,
+			"type": "notAdmitted"
+		}, {
+			"id": "PA",
+			"name": "PACU",
+			"capacity": 20,
+			"type": "admitted"
+		}, {
+			"id": "OR",
+			"name": "OR",
+			"capacity": 35,
+			"type": "admitted"
+		}, {
+			"id": "EL",
+			"name": "Elective Admissions",
+			"capacity": 18,
+			"type": "notAdmitted"
+		}, {
+			"id": "NE",
+			"name": "Non-Elective Admissions",
+			"capacity": 18,
+			"type": "notAdmitted"
+		}
+	],
+
+	"links": [
+		{
+			"source": "NE",
+			"target": "ER"
+		},
+		{
+			"source": "ER",
+			"target": "OR"
+		},
+		{
+			"source": "ER",
+			"target": "FL"
+		},
+		{
+			"source": "ER",
+			"target": "IC"
+		},
+		{
+			"source": "ER",
+			"target": "DI"
+		},
+		{
+			"source": "FL",
+			"target": "ER"
+		},
+		{
+			"source": "FL",
+			"target": "DI"
+		},
+		{
+			"source": "IC",
+			"target": "OR"
+		},
+		{
+			"source": "IC",
+			"target": "DI"
+		},
+		{
+			"source": "PA",
+			"target": "IC"
+		},
+		{
+			"source": "PA",
+			"target": "FL"
+		},
+		{
+			"source": "OR",
+			"target": "PA"
+		},
+		{
+			"source": "EL",
+			"target": "OR"
+		},
+		{
+			"source": "EL",
+			"target": "FL"
+		}
+	],
+
+	"nodeSegmentMapping": ["treatment", "low", "med", "high", "vacant"],
+
+	"waitRange": {
+		"low": [0, 3],
+		"med": [4, 6],
+		"high": [6, 100]
+	}
+}
