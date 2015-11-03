@@ -20,18 +20,19 @@
 		circular,
 		circularLayout,
 		computeDegree,
+		data,
 		getWaitClass,
-		graphData,
+		graphSetup,
 		height,
 		innerCircle,
 		labels,
 		lineConfiguration,
-		linkData,
 		linkThickness,
 		links,
 		linksLayer,
 		listLinks,
 		max,
+		network,
 		nodes,
 		nodesLayer,
 		objectify,
@@ -41,263 +42,173 @@
 		selected,
 		svg,
 		tension,
+		waitRange,
 		width;
 
-	graphData = {
-		nodes: [
-			{
-				id: 'ER',
-				name: 'ER',
-				capacity: 45,
-				type: 'admitted'
-			}, {
-				id: 'FL',
-				name: 'Floor',
-				capacity: 30,
-				type: 'admitted'
-			}, {
-				id: 'IC',
-				name: 'ICU',
-				capacity: 26,
-				type: 'admitted'
-			}, {
-				id: 'DI',
-				name: 'Discharged',
-				capacity: 18,
-				type: 'notAdmitted'
-			}, {
-				id: 'PA',
-				name: 'PACU',
-				capacity: 20,
-				type: 'admitted'
-			}, {
-				id: 'OR',
-				name: 'OR',
-				capacity: 35,
-				type: 'admitted'
-			}, {
-				id: 'EL',
-				name: 'Elective Admissions',
-				capacity: 18,
-				type: 'notAdmitted'
-			}, {
-				id: 'NE',
-				name: 'Non-Elective Admissions',
-				capacity: 18,
-				type: 'notAdmitted'
-			}
-		],
+	waitRange = {
+		low: [0, 3],
+		med: [4, 6],
+		high: [6, 100]
+	};
+
+	nodes = [
+		{
+			id: 'ED',
+			name: 'Emergency Department',
+			type: 'notAdmitted'
+		},
+		{
+			id: 'FLOOR',
+			name: 'Floor Unit',
+			type: 'admitted'
+		},
+		{
+			id: 'ICU',
+			name: 'Intensive Care Unit',
+			type: 'admitted'
+		},
+		{
+			id: 'DIS',
+			name: 'Discharge',
+			type: 'notAdmitted'
+		},
+		{
+			id: 'PACU',
+			name: 'Post-Anesthesia Care Unit',
+			type: 'admitted'
+		},
+		{
+			id: 'OR',
+			name: 'Operating Room',
+			type: 'admitted'
+		},
+		{
+			id: 'EA',
+			name: 'Elective Admissions',
+			type: 'notAdmitted'
+		},
+		{
+			id: 'OBS',
+			name: 'Observation',
+			type: 'notAdmitted'
+		},
+		{
+			id: 'NON_EA',
+			name: 'Non-Elective Admissions',
+			type: 'notAdmitted'
+		}
+	];
+
+	graphSetup = {
+		nodeCapacity: {
+			EA: 9,			// elective admissions
+			NON_EA: 8,		// non-Elective admissions
+			ED: 10,			// emergency department
+			OBS: 15,		// observation (not admitted)
+			ICU: 7,			// intensive care unit
+			OR: 11,			// operating room
+			PACU: 10,		// post-anesthesia care unit
+			FLOOR: 6,		// floor Unit
+			DIS: 6			// discharge
+		},
 
 		links: [
 			{
-				source: 'NE',
-				target: 'ER'
+				source: 'NON_EA',
+				target: 'ED'
 			},
 			{
-				source: 'ER',
+				source: 'ED',
 				target: 'OR'
 			},
 			{
-				source: 'ER',
-				target: 'FL'
+				source: 'ED',
+				target: 'FLOOR'
 			},
 			{
-				source: 'ER',
-				target: 'IC'
+				source: 'ED',
+				target: 'ICU'
 			},
 			{
-				source: 'ER',
-				target: 'DI'
+				source: 'ED',
+				target: 'DIS'
 			},
 			{
-				source: 'FL',
-				target: 'ER'
+				source: 'FLOOR',
+				target: 'ED'
 			},
 			{
-				source: 'FL',
-				target: 'DI'
+				source: 'FLOOR',
+				target: 'DIS'
 			},
 			{
-				source: 'IC',
+				source: 'ICU',
 				target: 'OR'
 			},
 			{
-				source: 'IC',
-				target: 'DI'
+				source: 'ICU',
+				target: 'DIS'
 			},
 			{
-				source: 'PA',
-				target: 'IC'
+				source: 'PACU',
+				target: 'ICU'
 			},
 			{
-				source: 'PA',
-				target: 'FL'
+				source: 'PACU',
+				target: 'FLOOR'
 			},
 			{
 				source: 'OR',
-				target: 'PA'
+				target: 'PACU'
 			},
 			{
-				source: 'EL',
+				source: 'EA',
 				target: 'OR'
 			},
 			{
-				source: 'EL',
-				target: 'FL'
+				source: 'EA',
+				target: 'FLOOR'
 			}
-		],
-
-		waitRange: {
-			low: [0, 3],
-			med: [4, 6],
-			high: [6, 100]
-		}
+		]
 	};
 
-	linkData = [
-		{
-			nodes: {
-				ER: [1, 2, 4, 1, 5],
-				FL: [2, 4, 3, 5, 6],
-				IC: [2, 4, 3, 4, 2],
-				DI: [3, 1, 3, 4, 1],
-				PA: [2, 4, 3, 5, 6],
-				OR: [3, 1, 5, 3, 1],
-				EL: [5, 4, 3, 5, 6],
-				NE: [1, 2, 4, 6, 2]
-			},
+	network = {
+		nodes: nodes.map(function(node) {
+			node.capacity = graphSetup.nodeCapacity[node.id];
+			return node;
+		}),
 
-			links: {
-				'NE|ER': {
-					vol: 10,
-					wait: 0
-				},
-				'ER|OR': {
-					vol: 20,
-					wait: 1
-				},
-				'ER|FL': {
-					vol: 18,
-					wait: 0.5
-				},
-				'ER|IC': {
-					vol: 34,
-					wait: 2
-				},
-				'ER|DI': {
-					vol: 12,
-					wait: 3
-				},
-				'FL|ER': {
-					vol: 15,
-					wait: 6
-				},
-				'FL|DI': {
-					vol: 15,
-					wait: 5
-				},
-				'IC|OR': {
-					vol: 5,
-					wait: 7
-				},
-				'IC|DI': {
-					vol: 10,
-					wait: 3
-				},
-				'PA|IC': {
-					vol: 19,
-					wait: 2
-				},
-				'PA|FL': {
-					vol: 15,
-					wait: 3
-				},
-				'OR|PA': {
-					vol: 18,
-					wait: 4
-				},
-				'EL|OR': {
-					vol: 20,
-					wait: 2.5
-				},
-				'EL|FL': {
-					vol: 30,
-					wait: 3
-				}
-			}
+		links: graphSetup.links
+	};
+
+	data = {
+		census: {
+			ED: [[2, 1, 1, 5], [2, 2, 3, 1]],
+			FLOOR: [[1, 2, 1, 0], [0, 2, 1, 1]],
+			ICU: [[1, 2, 1, 1], [2, 3, 1, 1]],
+			OR: [[1, 5, 3, 1], [4, 3, 5, 6]],
+			PACU: [[4, 3, 5, 6], [1, 3, 3, 4]]
 		},
-		{
-			nodes: {
-				ER: [5, 2, 4, 3, 5],
-				FL: [1, 2, 2, 5, 6],
-				IC: [2, 7, 3, 4, 3],
-				DI: [3, 3, 3, 4, 1],
-				PA: [1, 4, 4, 6, 5],
-				OR: [3, 8, 5, 3, 4],
-				EL: [5, 4, 3, 5, 6],
-				NE: [3, 1, 3, 3, 4]
-			},
 
-			links: {
-				'NE|ER': {
-					vol: 15,
-					wait: 1
-				},
-				'ER|OR': {
-					vol: 30,
-					wait: 1
-				},
-				'ER|FL': {
-					vol: 9,
-					wait: 2.5
-				},
-				'ER|IC': {
-					vol: 25,
-					wait: 0
-				},
-				'ER|DI': {
-					vol: 20,
-					wait: 4
-				},
-				'FL|ER': {
-					vol: 8,
-					wait: 3
-				},
-				'FL|DI': {
-					vol: 20,
-					wait: 0
-				},
-				'IC|OR': {
-					vol: 10,
-					wait: 5
-				},
-				'IC|DI': {
-					vol: 8,
-					wait: 0
-				},
-				'PA|IC': {
-					vol: 28,
-					wait: 3
-				},
-				'PA|FL': {
-					vol: 20,
-					wait: 2
-				},
-				'OR|PA': {
-					vol: 22,
-					wait: 1
-				},
-				'EL|OR': {
-					vol: 22,
-					wait: 0.5
-				},
-				'EL|FL': {
-					vol: 7,
-					wait: 2.5
-				}
-			}
+		outflow: {
+			// Inner array is [volumeExiting, avgWait, stdDevWait]
+			overall: [[20, 0.5, 0.2], [15, 1.1, 0.3]],
+			'NON_EA|ED': [[10, 0, 0.5], [5, 0, 0.5]],
+			'ED|OR': [[20, 1, 0.5], [25, 1, 0.5]],
+			'ED|FLOOR': [[18, 5, 0.5], [9, 5, 0.5]],
+			'ED|ICU': [[34, 2, 0.5], [30, 2, 0.5]],
+			'ED|DIS': [[12, 3, 0.5], [20, 3, 0.5]],
+			'FLOOR|ED': [[15, 6, 0.5], [5, 6, 0.5]],
+			'FLOOR|DIS': [[15, 5, 0.5], [25, 5, 0.5]],
+			'ICU|OR': [[5, 7, 0.5], [10, 7, 0.5]],
+			'ICU|DIS': [[10, 3, 0.5], [12, 3, 0.5]],
+			'PACU|ICU': [[19, 2, 0.5], [22, 2, 0.5]],
+			'PACU|FLOOR': [[15, 3, 0.5], [10, 3, 0.5]],
+			'OR|PACU': [[18, 4, 0.5], [19, 4, 0.5]],
+			'EA|OR': [[20, 5, 0.5], [23, 5, 0.5]],
+			'EA|FLOOR': [[30, 3, 0.5], [25, 3, 0.5]]
 		}
-	];
+	};
 
 	selected = 0;
 
@@ -319,7 +230,7 @@
 	};
 
 	// Replaces link to source with actual source
-	objectify(graphData);
+	objectify(network);
 
 	listLinks = function(graph) {
 		return graph.nodes.forEach(function(n) {
@@ -330,7 +241,7 @@
 	};
 
 	// Adds a list of links to each node
-	listLinks(graphData);
+	listLinks(network);
 
 	sankey = function(graph) {
 		return graph.nodes.forEach(function(n) {
@@ -338,7 +249,7 @@
 
 			acc = 0;
 			return n.links.forEach(function(link) {
-				var weight = linkData[selected].links[link.id].vol;
+				var weight = data.outflow[link.id][selected][0];
 				if (link.source === n) {
 					link.sankey_source = {
 						start: acc,
@@ -357,19 +268,19 @@
 	};
 
 	// For each node, for each link set the sankey source and target properties that have a start, middle and end
-	sankey(graphData);
+	sankey(network);
 
 	computeDegree = function(graph) {
 		return graph.nodes.forEach(function(n) {
 			n.degree = d3.sum(n.links, function(link) {
-				return linkData[selected].links[link.id].vol;
+				return data.outflow[link.id][selected][0];
 			});
 		});
 	};
 
 	// For each node, allocate it a 'degree' based on the sum of the weight of the node's links. This is used to
 	// determine how wide the set of node's links should be
-	computeDegree(graphData);
+	computeDegree(network);
 
 	// Set up the svg
 	svg = d3.select('svg');
@@ -481,7 +392,7 @@
 
 	circular = circularLayout().rho(innerCircle);
 
-	circular(graphData.nodes);
+	circular(network.nodes);
 
 	MAX_WIDTH = 100;
 
@@ -490,7 +401,7 @@
 	nodesLayer = svg.append('g');
 
 	radius = d3.scale.sqrt().domain([
-		0, d3.max(graphData.nodes, function(n) {
+		0, d3.max(network.nodes, function(n) {
 			return n.capacity;
 		})
 	]).range([0, MAX_WIDTH / 2]);
@@ -519,7 +430,7 @@
 		return node.y + adjustYCoord(node);
 	};
 
-	nodes = nodesLayer.selectAll('.node').data(graphData.nodes);
+	nodes = nodesLayer.selectAll('.node').data(network.nodes);
 
 	nodes.enter().append('circle').attr({
 		class: function(node) {
@@ -532,7 +443,7 @@
 		cy: calculateYCoordinate
 	});
 
-	labels = nodesLayer.selectAll('.label').data(graphData.nodes);
+	labels = nodesLayer.selectAll('.label').data(network.nodes);
 
 	labels.enter().append('text').text(function(node) {
 		return node.name;
@@ -543,36 +454,36 @@
 		y: calculateYCoordinate
 	});
 
-	max = d3.max(graphData.nodes, function(n) {
+	max = d3.max(network.nodes, function(n) {
 		return n.degree;
 	});
 
 	linkThickness = d3.scale.linear().domain([0, max]).range([0, MAX_WIDTH * 0.8]);
 
-	links = linksLayer.selectAll('.link').data(graphData.links);
+	links = linksLayer.selectAll('.link').data(network.links);
 
 	tension = 0.5;
 
 	getWaitClass = function(waitTime) {
-		if (waitTime >= graphData.waitRange.low[0] && waitTime <= graphData.waitRange.low[1]) {
+		if (waitTime >= waitRange.low[0] && waitTime <= waitRange.low[1]) {
 			return 'lowWait';
 		}
 
-		if (waitTime >= graphData.waitRange.med[0] && waitTime <= graphData.waitRange.med[1]) {
+		if (waitTime >= waitRange.med[0] && waitTime <= waitRange.med[1]) {
 			return 'medWait';
 		}
 
-		if (waitTime >= graphData.waitRange.high[0] && waitTime <= graphData.waitRange.high[1]) {
+		if (waitTime >= waitRange.high[0] && waitTime <= waitRange.high[1]) {
 			return 'highWait';
 		}
 	};
 
 	lineConfiguration = {
 		class: function(link) {
-			return getWaitClass(linkData[selected].links[link.id].wait) + ' link flowline';
+			return getWaitClass(data.outflow[link.id][selected][1]) + ' link flowline';
 		},
 		'stroke-width': function(link) {
-			return linkThickness(linkData[selected].links[link.id].vol);
+			return linkThickness(data.outflow[link.id][selected][0]);
 		}
 	};
 

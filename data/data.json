@@ -1,152 +1,33 @@
-[
-	{
-		"startTime": 1391403600000,
-
-		"endTime": 1391603600000,
-
-		"nodes": {
-			"ER": [1, 2, 4, 1, 5],
-			"FL": [2, 4, 3, 5, 6],
-			"IC": [2, 4, 3, 4, 2],
-			"DI": [3, 1, 3, 4, 1],
-			"PA": [2, 4, 3, 5, 6],
-			"OR": [3, 1, 5, 3, 1],
-			"EL": [5, 4, 3, 5, 6],
-			"NE": [1, 2, 4, 6, 2]
-		},
-
-		"links": {
-			"NE|ER": {
-				"vol": 10,
-				"wait": 0
-			},
-			"ER|OR": {
-				"vol": 20,
-				"wait": 1
-			},
-			"ER|FL": {
-				"vol": 18,
-				"wait": 0.5
-			},
-			"ER|IC": {
-				"vol": 34,
-				"wait": 2
-			},
-			"ER|DI": {
-				"vol": 12,
-				"wait": 3
-			},
-			"FL|ER": {
-				"vol": 15,
-				"wait": 6
-			},
-			"FL|DI": {
-				"vol": 15,
-				"wait": 5
-			},
-			"IC|OR": {
-				"vol": 5,
-				"wait": 7
-			},
-			"IC|DI": {
-				"vol": 10,
-				"wait": 3
-			},
-			"PA|IC": {
-				"vol": 19,
-				"wait": 2
-			},
-			"PA|FL": {
-				"vol": 15,
-				"wait": 3
-			},
-			"OR|PA": {
-				"vol": 18,
-				"wait": 4
-			},
-			"EL|OR": {
-				"vol": 20,
-				"wait": 2.5
-			},
-			"EL|FL": {
-				"vol": 35,
-				"wait": 3
-			}
-		}
+{
+	"nodeCapacity": {
+		"EA": 9,		// elective admissions
+		"NON_EA": 8,	// non-Elective admissions
+		"ED": 10,		// emergency department
+		"OBS": 15,		// observation (not admitted)
+		"ICU": 7,		// intensive care unit
+		"OR": 11,		// operating room
+		"PACU": 10,		// post-anesthesia care unit
+		"FLOOR": 6,		// floor Unit
+		"DIS": 6		// discharge
 	},
-	{
-		"startTime": 1391403600000,
 
-		"endTime": 1391603600000,
+	"census": {
+		"EA": [[5, 2, 4, 3, 5], [1, 2, 4, 1, 5]],
+		"FLOOR": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"ICU": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"DIS": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"PACU": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"OR": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"ED": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"NON_EA": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]],
+		"OBS": [[2, 4, 3, 5, 6], [2, 4, 3, 5, 6]]
+	},
 
-		"nodes": {
-			"ER": [5, 2, 4, 3, 5],
-			"FL": [1, 2, 2, 5, 6],
-			"IC": [2, 7, 3, 4, 3],
-			"DI": [3, 3, 3, 4, 1],
-			"PA": [1, 4, 4, 6, 5],
-			"OR": [3, 8, 5, 3, 4],
-			"EL": [5, 4, 3, 5, 6],
-			"NE": [3, 1, 3, 3, 4]
-		},
-
-		"links": {
-			"NE|ER": {
-				"vol": 10,
-				"wait": 1
-			},
-			"ER|OR": {
-				"vol": 20,
-				"wait": 1
-			},
-			"ER|FL": {
-				"vol": 18,
-				"wait": 2.5
-			},
-			"ER|IC": {
-				"vol": 34,
-				"wait": 0
-			},
-			"ER|DI": {
-				"vol": 12,
-				"wait": 4
-			},
-			"FL|ER": {
-				"vol": 15,
-				"wait": 3
-			},
-			"FL|DI": {
-				"vol": 15,
-				"wait": 4
-			},
-			"IC|OR": {
-				"vol": 5,
-				"wait": 5
-			},
-			"IC|DI": {
-				"vol": 10,
-				"wait": 0
-			},
-			"PA|IC": {
-				"vol": 19,
-				"wait": 3
-			},
-			"PA|FL": {
-				"vol": 15,
-				"wait": 2
-			},
-			"OR|PA": {
-				"vol": 18,
-				"wait": 1
-			},
-			"EL|OR": {
-				"vol": 20,
-				"wait": 0.5
-			},
-			"EL|FL": {
-				"vol": 35,
-				"wait": 2.5
-			}
-		}
-	}
-]
+    "outflow": {
+		// Inner array is [volumeExiting, avgWait, stdDevWait]
+        "overall": [[20, 0.5, 0.2], [15, 1.1, 0.3]],	// Special "overall" values are derived but precomputed for efficient "scrubber" rendering
+        "NE|ER": [[3, 1.2, 0.25], [3, 1.2, 0.25]],
+        "ED|FLOOR": [[3, 1.2, 0.25], [3, 1.2, 0.25]],
+        "FLOOR|ED": [[3, 1.2, 0.25], [3, 1.2, 0.25]]
+    }
+}

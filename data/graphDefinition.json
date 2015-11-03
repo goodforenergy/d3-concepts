@@ -1,96 +1,64 @@
 {
-	"nodes": [
-		{
-			"id": "ER",
-			"name": "ER",
-			"capacity": 45,
-			"type": "admitted"
-		}, {
-			"id": "FL",
-			"name": "Floor",
-			"capacity": 30,
-			"type": "admitted"
-		}, {
-			"id": "IC",
-			"name": "ICU",
-			"capacity": 26,
-			"type": "admitted"
-		}, {
-			"id": "DI",
-			"name": "Discharged",
-			"capacity": 18,
-			"type": "notAdmitted"
-		}, {
-			"id": "PA",
-			"name": "PACU",
-			"capacity": 20,
-			"type": "admitted"
-		}, {
-			"id": "OR",
-			"name": "OR",
-			"capacity": 35,
-			"type": "admitted"
-		}, {
-			"id": "EL",
-			"name": "Elective Admissions",
-			"capacity": 18,
-			"type": "notAdmitted"
-		}, {
-			"id": "NE",
-			"name": "Non-Elective Admissions",
-			"capacity": 18,
-			"type": "notAdmitted"
-		}
-	],
+	"nodeCapacity": {
+		"EA": 9,		// elective admissions
+		"NON_EA": 8,	// non-Elective admissions
+		"ED": 10,		// emergency department
+		"OBS": 15,		// observation (not admitted)
+		"ICU": 7,		// intensive care unit
+		"OR": 11,		// operating room
+		"PACU": 10,		// post-anesthesia care unit
+		"FLOOR": 6,		// floor Unit
+		"DIS": 6		// discharge
+	},
 
 	"links": [
 		{
-			"source": "NE",
-			"target": "ER"
+			"source": "NON_EA",
+			"target": "ED"
 		},
 		{
-			"source": "ER",
+			"source": "ED",
 			"target": "OR"
 		},
 		{
-			"source": "ER",
-			"target": "FL"
+			"source": "ED",
+			"target": "FLOOR"
 		},
 		{
-			"source": "ER",
-			"target": "IC"
+			"source": "ED",
+			"target": "ICU"
 		},
 		{
-			"source": "ER",
-			"target": "DI"
+			"source": "ED",
+			"target": "DIS"
 		},
 		{
-			"source": "FL",
-			"target": "ER"
+			"source": "FLOOR",
+			"target": "ED"
 		},
 		{
-			"source": "FL",
-			"target": "DI"
+			"source": "FLOOR",
+			"target": "DIS"
 		},
 		{
-			"source": "IC",
+			"source": "ICU",
 			"target": "OR"
 		},
 		{
-			"source": "IC",
-			"target": "DI"
+			"source": "ICU",
+			"target": "DIS"
 		},
 		{
-			"source": "PA",
-			"target": "IC"
+			"source": "PACU",
+			"target": "ICU"
 		},
 		{
-			"source": "PA",
-			"target": "FL"
+			"source": "PACU",
+			"target": "FLOOR"
 		},
 		{
 			"source": "OR",
-			"target": "PA"
+			"target": "PACU"
 		},
 		{
 			"source": "EL",
@@ -98,15 +66,7 @@
 		},
 		{
 			"source": "EL",
-			"target": "FL"
+			"target": "FLOOR"
 		}
-	],
-
-	"nodeSegmentMapping": ["treatment", "low", "med", "high", "vacant"],
-
-	"waitRange": {
-		"low": [0, 3],
-		"med": [4, 6],
-		"high": [6, 100]
-	}
+	]
 }
