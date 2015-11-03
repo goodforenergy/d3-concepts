@@ -1,4 +1,14 @@
 /* global d3 */
+/*
+1. Render the nodes at their maximum capcity, with labels
+2. Insert the lines that connect the nodes
+3. For each chunk of time in the selected time period
+	a. For each line
+		* Render the line width based on the volume of that line
+		* Assign the line a colour based on it's wait time
+	b. For each node
+		* Render the percentages of in treatment, low wait, med wait, high wait, unused
+*/
 (function() {
 	'use strict';
 	var MAX_WIDTH,
